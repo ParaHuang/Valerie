@@ -143,6 +143,7 @@ public class BlackoutController {
 
     public void simulate() {
         // TODO: Task 2a)
+    	
     }
 
     /**
@@ -157,7 +158,79 @@ public class BlackoutController {
 
     public List<String> communicableEntitiesInRange(String id) {
         // TODO: Task 2 b)
-        return new ArrayList<>();
+    	ArrayList<String> list = new ArrayList<String>();
+    	
+    	Device targetDevice = null;
+    	//if this id is a device id
+    	for (Device device : devices) {
+            if (device.getDeviceId().equals(id)) {
+            	targetDevice = device;
+            	break;
+            }
+    	}
+    	
+    	if(targetDevice != null) {//it's a device
+    		for (Satellite satellite:satellites) {
+    			boolean isVisible = MathsHelper.isVisible(satellite.getSatelliteHeight(), 
+    					satellite.getSatellitePosition(), targetDevice.getDevicePosition());
+    			
+            	String sType = satellite.getSatelliteType();
+            	String dType = targetDevice.getDeviceType();
+            	
+//            	if(isVisible or certain type satellite) {
+            		//certain type satellite
+            		//1.TeleportingSatellite   or
+            		//2.RelaySatellite			or
+            		//3.StandardSatellite     &&   (HandheldDevice  or LaptopDevice)
+//            	}
+            	
+            	if( isVisible &&
+            		(sType.equals("TeleportingSatellite")  
+            		|| sType.equals("RelaySatellite")
+            		|| (sType.equals("StandardSatellite") && (dType.equals("HandheldDevice") || dType.equals("LaptopDevice"))))) {
+            		list.add(satellite.getSatelliteId());
+            	}
+    		}
+    	}
+    	
+    	//it's a satellite id
+    	Satellite targetSatellite = null;
+    	for (Satellite satellite:satellites) {
+    		if(satellite.getSatelliteId().equals(id)){//it's the target satellite
+				targetSatellite = satellite;
+				break;
+			}
+    	}
+    	
+    	if(targetSatellite!=null) {//it's satellite
+	    	//find out all the communicable satellite
+	    	for (Satellite satellite:satellites) {
+	    		if(!satellite.equals(targetSatellite)){
+	    			boolean isVisible = MathsHelper.isVisible(targetSatellite.getSatelliteHeight(), 
+	            			targetSatellite.getSatellitePosition(),satellite.getSatelliteHeight(), satellite.getSatellitePosition());
+	    			if(isVisible) {
+	    				list.add(satellite.getSatelliteId());
+	    			}
+				}
+	    	}
+	    	
+	    	//find out all the communicable device
+	    	for (Device device : devices) {
+            	boolean isVisible = MathsHelper.isVisible(targetSatellite.getSatelliteHeight(), 
+            			targetSatellite.getSatellitePosition(), device.getDevicePosition());
+            	
+            	String sType = targetSatellite.getSatelliteType();
+            	String dType = device.getDeviceType();
+            	if( isVisible &&
+            		(sType.equals("TeleportingSatellite")  
+            		|| sType.equals("RelaySatellite")
+            		|| (sType.equals("StandardSatellite") && (dType.equals("HandheldDevice") || dType.equals("LaptopDevice"))))) {
+            		list.add(device.getDeviceId());
+            	}
+	    	}
+    	}
+    	
+        return list;
     }
 
     public void sendFile(String fileName, String fromId, String toId) throws FileTransferException {
