@@ -15,6 +15,15 @@ public class Device {
         File newFile = new File(filename, content);
         this.files.add(newFile);
     }
+    
+    public void removeFile(String filename) {
+    	for(File f:files) {
+    		if(f.getFilename().equals(filename)) {
+    			files.remove(f);
+    			return;
+    		}
+    	}
+    }
 
     public Device(String deviceId, String deviceType, Angle devicePosition) {
         this.deviceId = deviceId;

@@ -1,5 +1,8 @@
 package unsw.blackout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import unsw.utils.Angle;
 
 public class Satellite {
@@ -7,6 +10,22 @@ public class Satellite {
     private String satelliteType;
     private double satelliteHeight;
     private Angle satellitePosition;
+    
+    private List<File> files = new ArrayList<>();
+    
+    public void addFile(String filename, String content) {
+        File newFile = new File(filename, content);
+        this.files.add(newFile);
+    }
+    
+    public void removeFile(String filename) {
+    	for(File f:files) {
+    		if(f.getFilename().equals(filename)) {
+    			files.remove(f);
+    			return;
+    		}
+    	}
+    }
 
     public Satellite(String satelliteId, String satelliteType, double satelliteHeight, Angle satellitePosition) {
         this.satelliteId = satelliteId;
@@ -35,6 +54,11 @@ public class Satellite {
     public void setSatelliePosition(Angle satellitePosition) {
         this.satellitePosition = satellitePosition;
     }
+
+	public List<File> getFiles() {
+		// TODO Auto-generated method stub
+		return files;
+	}
 
 }
 

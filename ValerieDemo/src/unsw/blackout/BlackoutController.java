@@ -130,13 +130,20 @@ public class BlackoutController {
     	}
     	for (Satellite satellite:satellites) {
     		if(satellite.getSatelliteId().equals(id)) {
+    			List<File> files = satellite.getFiles();
+            	Map<String,FileInfoResponse> map = new HashMap<String, FileInfoResponse>();
+            	for(File f:files) {
+            		FileInfoResponse response = new FileInfoResponse(f.getFilename(), f.getContent(), f.getContent().length(), true);
+            		map.put(f.getFilename(), response);
+            	}
     			return new EntityInfoResponse(id, 
     					satellite.getSatellitePosition(), 
     					satellite.getSatelliteHeight(), 
-    					satellite.getSatelliteType()
-    					);
+    					satellite.getSatelliteType(),
+    					map);
     		}
     	}
+    	System.out.println("------");
     	
         return null;
     }
@@ -156,18 +163,37 @@ public class BlackoutController {
         }
     }
 
+    public Device getDeviceById(String id) {
+    	for (Device device : devices) {
+            if (device.getDeviceId().equals(id)) {
+            	return device;
+            }
+    	}
+    	return null;
+    }
+    
+    public Satellite getSatelliteById(String id) {
+    	for (Satellite satellite:satellites) {
+    		if(satellite.getSatelliteId().equals(id)){//it's the target satellite
+				return satellite;
+			}
+    	}
+    	return null;
+    }
+    
     public List<String> communicableEntitiesInRange(String id) {
         // TODO: Task 2 b)
     	ArrayList<String> list = new ArrayList<String>();
     	
-    	Device targetDevice = null;
+//    	Device targetDevice = null;
     	//if this id is a device id
-    	for (Device device : devices) {
-            if (device.getDeviceId().equals(id)) {
-            	targetDevice = device;
-            	break;
-            }
-    	}
+//    	for (Device device : devices) {
+//            if (device.getDeviceId().equals(id)) {
+//            	targetDevice = device;
+//            	break;
+//            }
+//    	}
+    	Device targetDevice = getDeviceById(id);
     	
     	if(targetDevice != null) {//it's a device
     		for (Satellite satellite:satellites) {
@@ -194,13 +220,14 @@ public class BlackoutController {
     	}
     	
     	//it's a satellite id
-    	Satellite targetSatellite = null;
-    	for (Satellite satellite:satellites) {
-    		if(satellite.getSatelliteId().equals(id)){//it's the target satellite
-				targetSatellite = satellite;
-				break;
-			}
-    	}
+//    	Satellite targetSatellite = null;
+//    	for (Satellite satellite:satellites) {
+//    		if(satellite.getSatelliteId().equals(id)){//it's the target satellite
+//				targetSatellite = satellite;
+//				break;
+//			}
+//    	}
+    	Satellite targetSatellite = getSatelliteById(id);
     	
     	if(targetSatellite!=null) {//it's satellite
 	    	//find out all the communicable satellite
@@ -235,6 +262,51 @@ public class BlackoutController {
 
     public void sendFile(String fileName, String fromId, String toId) throws FileTransferException {
         // TODO: Task 2 c)
+    	EntityInfoResponse fromEntity = getInfo(fromId);
+    	FileInfoResponse response = fromEntity.getFiles().get(fileName);
+    	//file not found
+    	if(response==null || !response.isFileComplete()) {
+    		throw new FileTransferException.VirtualFileNotFoundException(fileName);
+    	}
+    	//bandwidth not enough??
+    	
+    	
+    	//file exist
+    	EntityInfoResponse toEntity = getInfo(toId);
+    	FileInfoResponse existFile = toEntity.getFiles().get(fileName);
+    	if(existFile!=null) {
+    		throw new FileTransferException.VirtualFileAlreadyExistsException(fileName);
+    	}
+    	
+    	//storage??
+    	
+    	
+    	
+    	//fromEntity send file, toEntity get file
+//    	fromEntity.getFiles().remove(fileName);
+//    	toEntity.getFiles().put(fileName, new FileInfoResponse(fileName, response.getData(), response.getData().length(), true));
+//    	
+//    	System.out.println(toEntity.getFiles());
+//    	
+    	
+    	
+    	Satellite fromS = getSatelliteById(fromId);
+    	Satellite toS = getSatelliteById(toId);
+    	Device fromD  = getDeviceById(fromId);
+    	Device toD = getDeviceById(toId);
+    	
+//    	if(fromS != null) {
+//    		fromS.removeFile(fileName);
+//    	}else {
+//    		fromD.removeFile(fileName);
+//    	}
+    	if(toS != null) {
+    		toS.addFile(fileName, response.getData());
+    	}else {
+    		toD.addFile(fileName, response.getData());
+    	}
+    	
+    	
     }
 
     public void createDevice(String deviceId, String type, Angle position, boolean isMoving) {

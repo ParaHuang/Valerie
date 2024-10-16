@@ -51,30 +51,31 @@ public class Task2ExampleTests {
          assertListAreEqualIgnoringOrder(Arrays.asList("DeviceD"), controller.communicableEntitiesInRange("Satellite3"));
      }
 
-    // @Test
-    // public void testSomeExceptionsForSend() {
-    //     // just some of them... you'll have to test the rest
-    //     BlackoutController controller = new BlackoutController();
+     @Test
+     public void testSomeExceptionsForSend() {
+         // just some of them... you'll have to test the rest
+         BlackoutController controller = new BlackoutController();
 
-    //     // Creates 1 satellite and 2 devices
-    //     // Gets a device to send a file to a satellites and gets another device to download it.
-    //     // StandardSatellites are slow and transfer 1 byte per minute.
-    //     controller.createSatellite("Satellite1", "StandardSatellite", 5000 + RADIUS_OF_JUPITER, Angle.fromDegrees(320));
-    //     controller.createDevice("DeviceB", "LaptopDevice", Angle.fromDegrees(310));
-    //     controller.createDevice("DeviceC", "HandheldDevice", Angle.fromDegrees(320));
+         // Creates 1 satellite and 2 devices
+         // Gets a device to send a file to a satellites and gets another device to download it.
+         // StandardSatellites are slow and transfer 1 byte per minute.
+         controller.createSatellite("Satellite1", "StandardSatellite", 5000 + RADIUS_OF_JUPITER, Angle.fromDegrees(320));
+         controller.createDevice("DeviceB", "LaptopDevice", Angle.fromDegrees(310));
+         controller.createDevice("DeviceC", "HandheldDevice", Angle.fromDegrees(320));
 
-    //     String msg = "Hey";
-    //     controller.addFileToDevice("DeviceC", "FileAlpha", msg);
-    //     assertThrows(FileTransferException.VirtualFileNotFoundException.class,
-    //             () -> controller.sendFile("NonExistentFile", "DeviceC", "Satellite1"));
+         String msg = "Hey";
+         controller.addFileToDevice("DeviceC", "FileAlpha", msg);
+         assertThrows(FileTransferException.VirtualFileNotFoundException.class,
+                 () -> controller.sendFile("NonExistentFile", "DeviceC", "Satellite1"));
 
-    //     assertDoesNotThrow(() -> controller.sendFile("FileAlpha", "DeviceC", "Satellite1"));
-    //     assertEquals(new FileInfoResponse("FileAlpha", "", msg.length(), false),
-    //             controller.getInfo("Satellite1").getFiles().get("FileAlpha"));
-    //     controller.simulate(msg.length() * 2);
-    //     assertThrows(FileTransferException.VirtualFileAlreadyExistsException.class,
-    //             () -> controller.sendFile("FileAlpha", "DeviceC", "Satellite1"));
-    // }
+         assertDoesNotThrow(() -> controller.sendFile("FileAlpha", "DeviceC", "Satellite1"));
+         
+//         assertEquals(new FileInfoResponse("FileAlpha", "", msg.length(), false),
+//                 controller.getInfo("Satellite1").getFiles().get("FileAlpha"));
+         controller.simulate(msg.length() * 2);
+         assertThrows(FileTransferException.VirtualFileAlreadyExistsException.class,
+                 () -> controller.sendFile("FileAlpha", "DeviceC", "Satellite1"));
+     }
 
     // @Test
     // public void testMovement() {
