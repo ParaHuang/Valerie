@@ -66,13 +66,24 @@ public class Test2 {
 		list.stream().forEach(System.out::println);
 		
 //		Stream<String>
+		
+		List<Person> l = List.of(new Person(11),new Person(22),new Person(44),new Person(33),new Person(55),new Person(66));
+		l.stream().mapToInt(Person::getAge).forEach(System.out::println);
 	}
 
 }
 
 
 
-
+class Person{
+	int age;
+	Person(int age){
+		this.age = age;
+	}
+	public int getAge() {
+		return age;
+	}
+}
 
 
 

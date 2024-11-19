@@ -8,6 +8,8 @@ public class Test1 {
 			public int changeStringIntoInt(String str) {
 //				return Integer.parseInt(str);
 //				return MathOperator.makeDouble1(str);
+//				MathOperator math = new MathOperator();
+//				return math.makeTriple(str);
 				return new Integer(str);
 			}
 		};
@@ -73,6 +75,25 @@ class MathOperator{
 //1.	static method		ClassName::methodName
 //2.	instance method		instance::methodName
 //3.	constructor			ClassName::new
+//4.	special				abstract method of functional interface, it has a parameter,which is an instance
+//							the method body is using the method of this instance
+//							ClassName::methodName
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
